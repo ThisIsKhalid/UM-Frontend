@@ -8,6 +8,7 @@ import { Button, Col, Row } from "antd";
 import Image from "next/image";
 import { SubmitHandler } from "react-hook-form";
 import loginImage from "../../assets/login-cuate.svg";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   id: string;
@@ -16,12 +17,19 @@ type FormValues = {
 
 const LoginPage = () => {
   const [userLogin] = useUserLoginMutation();
+  const router = useRouter()
+
 
   const onsubmit: SubmitHandler<FormValues> = async (data: any) => {
     try {
       const res = await userLogin({ ...data }).unwrap();
-      // console.log(res)
-      storeUserInfo({ accessToken: res?.data?.accessToken });
+      console.log(res);
+
+      if(res?.accessToken){
+        storeUserInfo({ accessToken: res?.accessToken });
+
+        router.push('/profile')
+      }
     } catch (err: any) {
       console.error(err.message);
     }
